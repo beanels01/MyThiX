@@ -114,14 +114,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Mythix訂單小助手.exe" size="37336">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Mythix訂單小助手.exe" size="42456">
       <assemblyIdentity name="Mythix訂單小助手" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>R+tPJWSn4As8A+5tF4OdDrQLdN0sXuUEoEbKMaOo8v8=</dsig:DigestValue>
+        <dsig:DigestValue>V5zdLLD1ivgYtULwGmIYp2dosERE8EN8CdoFLtxjnc4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

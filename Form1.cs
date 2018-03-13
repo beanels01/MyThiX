@@ -59,6 +59,7 @@ namespace WindowsFormsApp1
         public int prev_indexPlayer=-1;
         Global Main_Form = new Global();
         Global Skill_Form = new Global();
+        Global Service_Form = new Global();
         public string credPath;
         public static int balance_begin = 26;
         public static int balance_end = 33;
@@ -83,6 +84,7 @@ namespace WindowsFormsApp1
         public static int skill_blue_begin = 203;
         public static int skill_purple_begin = 475;
         public static int skill_purple_end = 910;
+        public UserCredential credential;
 
 
         private void label1_Click(object sender, EventArgs e)
@@ -127,41 +129,14 @@ namespace WindowsFormsApp1
         {
 
         }
-
-        public void calexchange()
-        {
-            if (comboReq.Text == "預支")
-            {
-                
-                int exval =Convert.ToInt32(comboAmount.Text);
-                exval *= 22;
-                exval /= 100;
-                exchangeamount.Text = exval.ToString();
-
-            }
-            else
-            {
-                int value = comboEx.SelectedIndex + 1;
-                if (value > 2)
-                {
-                    int exval = 65 * Convert.ToInt32(textBox3.Text);
-                    exchangeamount.Text =exval.ToString();
-                }
-                else {
-
-                    int exval = 2 * Convert.ToInt32(textBox3.Text);
-                    exchangeamount.Text = exval.ToString();
-                }
-            }
-        }
-
         public void GenerateItemList(Global Main_Form, Global Skill_Form, ComboBox cc, ComboBox ce, ComboBox ck, ComboBox ca)
         {
+            
             if (ck.Text.ToString() == "均衡")
             {
-                
+
                 ca.Items.Clear();
-                for(int i = balance_begin;i<=balance_end;i++)
+                for (int i = balance_begin; i <= balance_end; i++)
                     try
                     {
                         ca.Items.Add(Main_Form.g_Form[i][2]);
@@ -171,33 +146,33 @@ namespace WindowsFormsApp1
                         continue;
                     }
                 ca.SelectedIndex = 0;
-                }
-            
+            }
+
             else if (ck.Text.ToString() == "變化")
             {
                 ca.Items.Clear();
-                for(int i = transform_begin; i <= transform_end; i++)
+                for (int i = transform_begin; i <= transform_end; i++)
                     try
                     {
-                    ca.Items.Add(Main_Form.g_Form[i][2]);
+                        ca.Items.Add(Main_Form.g_Form[i][2]);
                     }
                     catch (Exception e)
                     {
-                    continue;
-                     }
+                        continue;
+                    }
                 ca.SelectedIndex = 0;
 
-        }
-           
+            }
+
             else if (ck.Text.ToString() == "熟練")
             {
-                int range_begin=0, range_end=0;
+                int range_begin = 0, range_end = 0;
                 if (cc.Text.ToString() == "赤紅")
                 {
                     if (ce.Text.ToString() == "上衣")
                     {
                         range_begin = practice_red_top_begin;
-                        range_end = practice_red_bottom_begin-1;
+                        range_end = practice_red_bottom_begin - 1;
                     }
                     else if (ce.Text.ToString() == "下衣")
                     {
@@ -261,7 +236,7 @@ namespace WindowsFormsApp1
                         range_end = practice_purple_end;
                     }
                 }
-                
+
                 ca.Items.Clear();
                 for (int i = range_begin; i <= range_end; i++)
                     try
@@ -313,10 +288,121 @@ namespace WindowsFormsApp1
                 Console.Read();
             }
 
+            
 
-        
+        }
+        public void calexchange()
+        {
+            if (comboReq.Text == "預支")
+            {
+                
+                int exval =Convert.ToInt32(comboAmount.Text);
+                exval *= 22;
+                exval /= 100;
+                exchangeamount.Text = exval.ToString();
 
-}
+            }
+            else
+            {
+                int value = comboEx.SelectedIndex + 1;
+                if (value > 2)
+                {
+                    int exval = 65 * Convert.ToInt32(textBox3.Text);
+                    exchangeamount.Text =exval.ToString();
+                }
+                else {
+
+                    int exval = 2 * Convert.ToInt32(textBox3.Text);
+                    exchangeamount.Text = exval.ToString();
+                }
+            }
+        }
+
+        public void Login_Success()
+        {
+            string OnlineVersionCode="";
+            var service = new SheetsService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = ApplicationName,
+            });
+            for (int i = 0; i < Main_Form.g_Form.Count; i++)
+            {
+
+                    if(i!=249 && i!=125 && i!=1)
+                    try
+                    {
+                            if (Service_Form.g_Form[i][4].ToString() != Main_Form.g_Form[i][3].ToString())
+                            {
+                                status.Text = "目前狀態：偵測到價格異動...同步中";
+                                Console.WriteLine("偵測到價格異動 patching... x:" + i);
+                                Main_Form.g_Form[i][3] = Service_Form.g_Form[i][4];
+                                string range = "非技能類!D" + (i+1).ToString();
+                                ValueRange valueRange = new ValueRange();
+                                valueRange.MajorDimension = "ROWS";
+                                var oblist = new List<object>() { Main_Form.g_Form[i][3] };
+                                valueRange.Values = new List<IList<object>> { oblist };
+                                Console.WriteLine("Uploading Array...");
+                                SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, ID_Var, range);
+                                update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+                                UpdateValuesResponse result2 = update.Execute();
+                    }
+                    }
+                    catch(Exception er)
+                    {
+                        MessageBox.Show(er.ToString());
+                        continue;
+                    }
+            }
+            for(int i = Main_Form.g_Form.Count; i < Service_Form.g_Form.Count; i++)
+            {
+                try
+                {
+                    if (Service_Form.g_Form[i][0].ToString() == "後端版本號")
+                    {
+                         OnlineVersionCode = Service_Form.g_Form[i][1].ToString();
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+            
+
+
+            if (VersionCode.StartsWith(OnlineVersionCode))
+            {
+                for (int i = 5; i < Main_Form.g_Form[1].Count; i++)
+                {
+                    if (Main_Form.g_Form[1][i].ToString() != "")
+                    {
+                        ComboPlayer.Items.Add(Main_Form.g_Form[1][i]);
+                        ComboPlayer2.Items.Add(Main_Form.g_Form[1][i]);
+                        comboApplier.Items.Add(Main_Form.g_Form[1][i]);
+                    }
+                    else
+                        break;
+                }
+                status.Text = "目前狀態:登入成功!歡迎使用小助手" + VersionCode + "!";
+                AutoFixForm();
+                tabControl1.Enabled = true;
+                ComboPlayer.SelectedIndex = 0;
+                ComboPlayer2.SelectedIndex = 0;
+                comboReq.SelectedIndex = 0;
+                comboApplier.SelectedIndex = 0;
+                comboEx.SelectedIndex = 0;
+                GenerateItemList(Main_Form, Skill_Form, ComboColor, ComboEquip, ComboKind, ComboAbility);
+                GenerateItemList(Main_Form, Skill_Form, ComboColor2, ComboEquip2, ComboKind2, ComboAbility2);
+            }
+            else
+            {
+                Console.WriteLine(VersionCode);
+                MessageBox.Show("小助手版本過舊！請向幹部索取更新版本！");
+            }
+        }
+
+
         
 
         private void ComboKind_SelectedIndexChanged(object sender, EventArgs e)
@@ -393,11 +479,19 @@ namespace WindowsFormsApp1
                 price.Text = Main_Form.g_Form[itemIndex][3].ToString();
             }
         }
+        public void AutoFixForm()
+        {
+
+        }
+
 
         private void tabPage1_Click(object sender, EventArgs e)
         {
 
         }
+
+
+
 
         private void ComboValue_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -410,6 +504,11 @@ namespace WindowsFormsApp1
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (textBox2.Text != "988386")
+            {
+                foreach (Control ctl in tabPage4.Controls) ctl.Enabled = false;
+            }
+
             if(checkBox1.Checked)
             {
                 string path = "GDID.ini";
@@ -433,7 +532,7 @@ namespace WindowsFormsApp1
             }
             try
             {
-                UserCredential credential;
+               
 
                 using (var stream =
                     new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
@@ -453,6 +552,8 @@ namespace WindowsFormsApp1
                     HttpClientInitializer = credential,
                     ApplicationName = ApplicationName,
                 });
+                status.Text = "目前狀態:登入成功!請稍候系統自動同步表單訊息....";
+
                 ID_Var = textBox1.Text;
                 SpreadsheetsResource.ValuesResource.GetRequest request =
                 service.Spreadsheets.Values.Get(ID_Var,"非技能類!A1:P523");
@@ -463,37 +564,10 @@ namespace WindowsFormsApp1
                 response = request.Execute();
                 Skill_Form.g_Form = response.Values;
                 request =
-                service.Spreadsheets.Values.Get(ServiceTotalForm, "非技能類!B378");
+                service.Spreadsheets.Values.Get(ServiceTotalForm, "非技能類!A1:F378");
                 response = request.Execute();
-                if (VersionCode.StartsWith(response.Values[0][0].ToString()))
-                {
-                    for (int i = 5; i < Main_Form.g_Form[1].Count; i++)
-                    {
-                        if (Main_Form.g_Form[1][i].ToString() != "")
-                        {
-                            ComboPlayer.Items.Add(Main_Form.g_Form[1][i]);
-                            ComboPlayer2.Items.Add(Main_Form.g_Form[1][i]);
-                            comboApplier.Items.Add(Main_Form.g_Form[1][i]);
-                        }
-                        else
-                            break;
-                    }
-                    status.Text = "目前狀態:登入成功!";
-                    tabControl1.Enabled = true;
-                    ComboPlayer.SelectedIndex = 0;
-                    ComboPlayer2.SelectedIndex = 0;
-                    comboReq.SelectedIndex = 0;
-                    comboApplier.SelectedIndex = 0;
-                    comboEx.SelectedIndex = 0;
-                    GenerateItemList(Main_Form, Skill_Form, ComboColor, ComboEquip, ComboKind, ComboAbility);
-                    GenerateItemList(Main_Form, Skill_Form, ComboColor2, ComboEquip2, ComboKind2, ComboAbility2);
-                }
-                else
-                {
-                    Console.WriteLine(response.Values[0][0]);
-                    Console.WriteLine(VersionCode);
-                    MessageBox.Show("小助手版本過舊！請向幹部索取更新版本！");
-                }
+                Service_Form.g_Form = response.Values;
+                Login_Success();
             }
             catch(Exception ex_login) {
                 MessageBox.Show("表單取得錯誤!請修正試算表ID\n錯誤訊息："+ex_login.ToString());
@@ -560,7 +634,7 @@ namespace WindowsFormsApp1
                             break;
                         }
                     }
-                    for (int i = itemIndexPlayer; i < Skill_Form.g_Form[1].Count; i++)
+                    for (int i = itemIndexPlayer; i < Skill_Form.g_Form[2].Count; i++)
                     {
                         if (Skill_Form.g_Form[2][i].ToString() == ComboPer.Text.ToString())
                         {
@@ -1012,6 +1086,11 @@ namespace WindowsFormsApp1
             {
                 e.Handled = true;
             }
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
