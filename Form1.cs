@@ -24,7 +24,7 @@ namespace WindowsFormsApp1
 
     public partial class Form1 : Form
     {
-        String VersionCode = "v1.4.1";
+        String VersionCode = "v1.4.2";
         String PublicTotalForm = "1AxlF5nYUEo4E8oJw_x2hMKicOYYEoefshPAdknIGg40";
         String ServiceTotalForm = "1mz2gaIKqHasRumcF3LfY6tIRGScMRfkYiAQX1LKGy6k";
         String PlayerForm = "1gg1M9Ldrr-YQBRkDJNsADRd1lJxia8X_Gx_dwUGW5aY";
@@ -336,7 +336,6 @@ namespace WindowsFormsApp1
             });
             for (int i = 0; i < Main_Form.g_Form.Count; i++)
             {
-
                     if(i!=249 && i!=125 && i!=1)
                     try
                     {
