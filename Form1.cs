@@ -169,22 +169,25 @@ namespace WindowsFormsApp1
                 index[1] = index[0];
                 if (ces == ce.Items.Count-1)
                 {
+                    Console.WriteLine("ce chage line");
                     if (cks == ck.Items.Count - 1)
                     {
+                        Console.WriteLine("ck chage line");
                         if (ccs == cc.Items.Count - 1)
                         {
+                            Console.WriteLine("end chage line");
                             index[1] = g_Form.Count-1;
                             return index;
                         }
                         else
                         {
-                            ccs++;
+                            ccs=ccs+1;
                             cks = 0;
                         }
                     }
                     else
                     {
-                        cks++;
+                        cks=cks+1;
                         ces = 0;
                     }
                 }
@@ -193,7 +196,7 @@ namespace WindowsFormsApp1
                     ces=ces+1;
                 }
                 
-                index[1] = search_index(c[ccs] + "/" + k[cks], 0, index[0]);
+                index[1] = search_index(c[ccs] + "/" + k[cks], 0, 0);
                 index[1] = search_index(e[ces], 1, index[1]);
                 index[1]--;
                 return index;
