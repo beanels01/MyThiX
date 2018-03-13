@@ -24,7 +24,7 @@ namespace WindowsFormsApp1
 
     public partial class Form1 : Form
     {
-        String VersionCode = "v1.4.2";
+        String VersionCode = "v1.4.3";
         String PublicTotalForm = "1AxlF5nYUEo4E8oJw_x2hMKicOYYEoefshPAdknIGg40";
         String ServiceTotalForm = "1mz2gaIKqHasRumcF3LfY6tIRGScMRfkYiAQX1LKGy6k";
         String PlayerForm = "1gg1M9Ldrr-YQBRkDJNsADRd1lJxia8X_Gx_dwUGW5aY";
@@ -93,7 +93,7 @@ namespace WindowsFormsApp1
         public static int skill_purple_end = 910;
         public UserCredential credential;
 
-
+       
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -118,6 +118,106 @@ namespace WindowsFormsApp1
         public class Global
         {
             public IList<IList<Object>> g_Form;
+            public int search_index(string search, int where,int wherefrom)
+            {
+                int index = 0;
+                for (int i = wherefrom; i < g_Form.Count; i++)
+                {
+                    try
+                    {
+                        if (g_Form[i][where].ToString() == search)
+                        {
+                       
+                            index = i;
+                            return index;
+                        
+                        }
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+                return index;
+            }
+            public bool search_string(string search, int where, int wherefrom)
+            {
+                for (int i = 0; i < g_Form.Count; i++)
+                {
+                    try { 
+                        if (g_Form[i][where].ToString() == search)
+                        {
+                        return true;
+                        }
+                    }
+                    catch
+                    {
+                    continue;
+                    }
+            }
+                return false;
+            }
+            public int[] search_nonskill(ComboBox cc,ComboBox ck,ComboBox ce)
+            {
+                var index= new int[2];
+                var c = new string[3] { "赤紅", "青藍", "靛紫" };
+                var k = new string[3] { "變化", "均衡", "熟練" };
+                var e = new string[4] { "上衣", "下衣", "手套","鞋子" };
+                int ces=ce.SelectedIndex, cks=ck.SelectedIndex, ccs=cc.SelectedIndex;
+                index[0] = search_index(cc.Text+"/"+ck.Text, 0, index[0]);
+                index[0] = search_index(ce.Text, 1, index[0]);
+                index[1] = index[0];
+                if (ces == ce.Items.Count-1)
+                {
+                    if (cks == ck.Items.Count - 1)
+                    {
+                        if (ccs == cc.Items.Count - 1)
+                        {
+                            index[1] = g_Form.Count-1;
+                            return index;
+                        }
+                        else
+                        {
+                            ccs++;
+                            cks = 0;
+                        }
+                    }
+                    else
+                    {
+                        cks++;
+                        ces = 0;
+                    }
+                }
+                else
+                {
+                    ces=ces+1;
+                }
+                
+                index[1] = search_index(c[ccs] + "/" + k[cks], 0, index[0]);
+                index[1] = search_index(e[ces], 1, index[1]);
+                index[1]--;
+                return index;
+            }
+            public int[] search_skill(ComboBox cc)
+            {
+                var index = new int[2];
+                var c = new string[3] { "赤紅", "青藍", "靛紫" };
+                int ccs = cc.SelectedIndex;
+                index[0] = search_index(cc.Text, 0, index[0]);
+                index[1] = index[0];
+                if (ccs != 2)
+                {
+                    ccs++;
+                }
+                else
+                {
+                    index[1] = g_Form.Count-1;
+                    return index;
+                }
+                index[1] = search_index(c[ccs], 0, index[0]);
+                index[1]--;
+                return index;
+            }
         }
 
         public class moneyitem
@@ -136,162 +236,60 @@ namespace WindowsFormsApp1
         {
 
         }
+        public void Upload(List<IList<object>> ob,string range)
+        {
+            var service = new SheetsService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = ApplicationName,
+            });
+            ValueRange valueRange = new ValueRange();
+            valueRange.MajorDimension = "ROWS";
+            valueRange.Values = ob;
+            Console.WriteLine(valueRange.Values[0][0]);
+            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, ID_Var, range);
+            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+            UpdateValuesResponse result2 = update.Execute();
+        }
         public void GenerateItemList(Global Main_Form, Global Skill_Form, ComboBox cc, ComboBox ce, ComboBox ck, ComboBox ca)
         {
-            
-            if (ck.Text.ToString() == "均衡")
+            var search = new int[2];
+            if (ck.Text != "破壞")
             {
+                search = Main_Form.search_nonskill(cc, ck, ce);
+                    ca.Items.Clear();
 
-                ca.Items.Clear();
-                for (int i = balance_begin; i <= balance_end; i++)
-                    try
-                    {
-                        ca.Items.Add(Main_Form.g_Form[i][2]);
-                    }
-                    catch (Exception e)
-                    {
-                        continue;
-                    }
-                ca.SelectedIndex = 0;
+                    for (int i = search[0]; i <= search[1]; i++)
+                        try
+                        {
+                            ca.Items.Add(Main_Form.g_Form[i][2]);
+                        }
+                        catch (Exception e)
+                        {
+                            continue;
+                        }
+                    if (ca.Items.Count > 0)
+                        ca.SelectedIndex = 0;
             }
 
-            else if (ck.Text.ToString() == "變化")
+            else
             {
+                search = Skill_Form.search_skill(cc);
                 ca.Items.Clear();
-                for (int i = transform_begin; i <= transform_end; i++)
-                    try
-                    {
-                        ca.Items.Add(Main_Form.g_Form[i][2]);
-                    }
-                    catch (Exception e)
-                    {
-                        continue;
-                    }
-                ca.SelectedIndex = 0;
-
-            }
-
-            else if (ck.Text.ToString() == "熟練")
-            {
-                int range_begin = 0, range_end = 0;
-                if (cc.Text.ToString() == "赤紅")
-                {
-                    if (ce.Text.ToString() == "上衣")
-                    {
-                        range_begin = practice_red_top_begin;
-                        range_end = practice_red_bottom_begin - 1;
-                    }
-                    else if (ce.Text.ToString() == "下衣")
-                    {
-                        range_begin = practice_red_bottom_begin;
-                        range_end = practice_red_hand_begin - 1;
-                    }
-                    else if (ce.Text.ToString() == "手套")
-                    {
-                        range_begin = practice_red_hand_begin;
-                        range_end = practice_red_shoes_begin - 1;
-                    }
-                    else if (ce.Text.ToString() == "鞋子")
-                    {
-                        range_begin = practice_red_shoes_begin;
-                        range_end = practice_red_end;
-                    }
-                }
-                else if (cc.Text.ToString() == "青藍")
-                {
-                    if (ce.Text.ToString() == "上衣")
-                    {
-                        range_begin = practice_blue_top_begin;
-                        range_end = practice_blue_bottom_begin - 1;
-                    }
-                    else if (ce.Text.ToString() == "下衣")
-                    {
-                        range_begin = practice_blue_bottom_begin;
-                        range_end = practice_blue_hand_begin - 1;
-                    }
-                    else if (ce.Text.ToString() == "手套")
-                    {
-                        range_begin = practice_blue_hand_begin;
-                        range_end = practice_blue_shoes_begin - 1;
-                    }
-                    else if (ce.Text.ToString() == "鞋子")
-                    {
-                        range_begin = practice_blue_shoes_begin;
-                        range_end = practice_blue_end;
-                    }
-                }
-                else if (cc.Text.ToString() == "靛紫")
-                {
-                    if (ce.Text.ToString() == "上衣")
-                    {
-                        range_begin = practice_purple_top_begin;
-                        range_end = practice_purple_bottom_begin - 1;
-                    }
-                    else if (ce.Text.ToString() == "下衣")
-                    {
-                        range_begin = practice_purple_bottom_begin;
-                        range_end = practice_purple_hand_begin - 1;
-                    }
-                    else if (ce.Text.ToString() == "手套")
-                    {
-                        range_begin = practice_purple_hand_begin;
-                        range_end = practice_purple_shoes_begin - 1;
-                    }
-                    else if (ce.Text.ToString() == "鞋子")
-                    {
-                        range_begin = practice_purple_shoes_begin;
-                        range_end = practice_purple_end;
-                    }
-                }
-
-                ca.Items.Clear();
-                for (int i = range_begin; i <= range_end; i++)
-                    try
-                    {
-                        ca.Items.Add(Main_Form.g_Form[i][2]);
-                        Console.WriteLine("{0}", Main_Form.g_Form[i][2]);
-                    }
-                    catch (Exception e)
-                    {
-                        continue;
-                    }
-                ca.SelectedIndex = 0;
-                Console.Read();
-
-            }
-            else if (ck.Text.ToString() == "破壞")
-            {
-                int range_begin = 0, range_end = 0;
-                if (cc.Text.ToString() == "赤紅")
-                {
-                    range_begin = skill_red_begin;
-                    range_end = skill_blue_begin - 1;
-                }
-                if (cc.Text.ToString() == "青藍")
-                {
-                    range_begin = skill_blue_begin;
-                    range_end = skill_purple_begin - 1;
-                }
-                if (cc.Text.ToString() == "靛紫")
-                {
-                    range_begin = skill_purple_begin;
-                    range_end = skill_purple_end;
-                }
-                ca.Items.Clear();
-                for (int i = range_begin; i <= range_end; i++)
+                for (int i = search[0]; i <= search[1]; i++)
                     try
                     {
                         if (Skill_Form.g_Form[i][1].ToString() != "")
                         {
                             ca.Items.Add(Skill_Form.g_Form[i][1]);
-                            Console.WriteLine("{0}", Main_Form.g_Form[i][1]);
                         }
                     }
                     catch (Exception e)
                     {
                         continue;
                     }
-                ca.SelectedIndex = 0;
+                if (ca.Items.Count > 0)
+                    ca.SelectedIndex = 0;
                 Console.Read();
             }
 
@@ -380,36 +378,35 @@ namespace WindowsFormsApp1
                 UpdateValuesResponse result2 = update.Execute();
             }
 
-
-            for(int i = Main_Form.g_Form.Count; i < Service_Form.g_Form.Count; i++)
-            {
-                try
-                {
-                    if (Service_Form.g_Form[i][0].ToString() == "後端版本號")
+            
+                    if (Service_Form.search_string("後端版本號",0,375))
                     {
-                         OnlineVersionCode = Service_Form.g_Form[i][1].ToString();
+                         OnlineVersionCode = Service_Form.g_Form[Service_Form.search_index("後端版本號", 0,375)][1].ToString();
                     }
-                }
-                catch
-                {
-                    continue;
-                }
-            }
             
 
 
             if (VersionCode.StartsWith(OnlineVersionCode))
             {
+                var oblist = new List<object>() { };
                 for (int i = 5; i < Main_Form.g_Form[1].Count; i++)
                 {
                     if (Main_Form.g_Form[1][i].ToString() != "")
                     {
+                        oblist.Add(Main_Form.g_Form[1][i]);
+                        oblist.Add("");
+                        oblist.Add("");
+                        oblist.Add("");
                         ComboPlayer.Items.Add(Main_Form.g_Form[1][i]);
                         ComboPlayer2.Items.Add(Main_Form.g_Form[1][i]);
                         comboApplier.Items.Add(Main_Form.g_Form[1][i]);
                     }
                     else
                         break;
+                }
+                if(oblist!= null)
+                {
+                    Upload(new List<IList<object>> { oblist }, "技能類!I2:AF2");
                 }
                 status.Text = "目前狀態:登入成功!歡迎使用小助手" + VersionCode + "!";
                 AutoFixForm();
@@ -465,7 +462,11 @@ namespace WindowsFormsApp1
 
         private void ComboAbility_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int itemIndex=0;
+            if(ComboAbility.Text.ToString()== "指令攻擊傷害增加")
+            {
+                ComboPer.Items.Add("0+");
+            }
+            var search = new int[2];
             if (ComboKind.Text.ToString() == "破壞")
             {
 
@@ -475,7 +476,7 @@ namespace WindowsFormsApp1
                     {
                         if (Skill_Form.g_Form[i][1].ToString() == ComboAbility.Text.ToString())
                         {
-                            itemIndex = i;
+                            search[0] = i;
                             break;
                         }
                     }
@@ -484,7 +485,7 @@ namespace WindowsFormsApp1
                         continue;
                     }
                 }
-                price.Text = Skill_Form.g_Form[itemIndex][2].ToString();
+                price.Text = Skill_Form.g_Form[search[0]][2].ToString();
             }
             else
             {
@@ -494,7 +495,7 @@ namespace WindowsFormsApp1
                     {
                         if (Main_Form.g_Form[i][2].ToString() == ComboAbility.Text.ToString())
                         {
-                            itemIndex = i;
+                            search[0] = i;
                             break;
                         }
                     }
@@ -503,7 +504,7 @@ namespace WindowsFormsApp1
                         continue;
                     }
                 }
-                price.Text = Main_Form.g_Form[itemIndex][3].ToString();
+                price.Text = Main_Form.g_Form[search[0]][3].ToString();
             }
         }
         public void AutoFixForm()
@@ -583,15 +584,15 @@ namespace WindowsFormsApp1
 
                 ID_Var = textBox1.Text;
                 SpreadsheetsResource.ValuesResource.GetRequest request =
-                service.Spreadsheets.Values.Get(ID_Var,"非技能類!A1:P523");
+                service.Spreadsheets.Values.Get(ID_Var,"非技能類!A1:AZ2000");
                 ValueRange response = request.Execute();
                 Main_Form.g_Form = response.Values;
                 request =
-                service.Spreadsheets.Values.Get(ID_Var, "技能類!A1:BL911");
+                service.Spreadsheets.Values.Get(ID_Var, "技能類!A1:AZ2000");
                 response = request.Execute();
                 Skill_Form.g_Form = response.Values;
                 request =
-                service.Spreadsheets.Values.Get(ServiceTotalForm, "非技能類!A1:F378");
+                service.Spreadsheets.Values.Get(ServiceTotalForm, "非技能類!A1:AZ2000");
                 response = request.Execute();
                 Service_Form.g_Form = response.Values;
                 Login_Success();
@@ -624,69 +625,44 @@ namespace WindowsFormsApp1
                     Console.WriteLine("Credential file saved to: " + credPath);
                 }
 
-                int itemIndex = -1;
-                int itemIndexPlayer = -1;
+                var search = new int[2];
 
                 if (ComboKind.Text.ToString() == "破壞")
                 {
-                    for (int i = 0; i < Skill_Form.g_Form.Count; i++)
-                    {
-                        if (Skill_Form.g_Form[i][0].ToString() == ComboColor.Text.ToString())
-                        {
-                            itemIndex = i;
-                            break;
-                        }
-                    }
-                    for (int i = itemIndex; i < Skill_Form.g_Form.Count; i++)
-                    {
-                        if (Skill_Form.g_Form[i][1].ToString() == ComboAbility.Text.ToString())
-                        {
-                            itemIndex = i;
-                            break;
-                        }
-                    }
-                    for (int i = itemIndex; i < Skill_Form.g_Form.Count; i++)
-                    {
-                        if (Skill_Form.g_Form[i][2].ToString() == ComboEquip.Text.ToString())
-                        {
-                            itemIndex = i;
-                            break;
-                        }
-                    }
+                    search[0] = Skill_Form.search_index(ComboColor.Text, 0, 0);
+                    search[0] = Skill_Form.search_index(ComboAbility.Text,1,search[0]);
+                    search[0] = Skill_Form.search_index(ComboPer.Text, 2, search[0]);
+                    
                     for (int i = 8; i < Skill_Form.g_Form[1].Count; i++)
                     {
                         if (Skill_Form.g_Form[1][i].ToString() == ComboPlayer.Text.ToString())
                         {
-                            itemIndexPlayer = i;
+                            search[1] = i;
                             break;
                         }
                     }
-                    for (int i = itemIndexPlayer; i < Skill_Form.g_Form[2].Count; i++)
+                    for (int i = search[1]; i < Skill_Form.g_Form[2].Count; i++)
                     {
-                        if (Skill_Form.g_Form[2][i].ToString() == ComboPer.Text.ToString())
+                        if (Skill_Form.g_Form[2][i].ToString() == ComboEquip.Text.ToString())
                         {
-                            itemIndexPlayer = i;
+                            search[1] = i;
                             break;
                         }
                     }
-                    prev_index = itemIndex;
-                    prev_indexPlayer = itemIndexPlayer;
+                    prev_index = search[0];
+                    prev_indexPlayer = search[1];
                     ///////
                     string parsepost = "";
-                    itemIndexPlayer++;
-                    itemIndex++;
+                    search[0]++;
+                    search[1]++;
                     
-
-                    Console.WriteLine("position {0} {1} is now {2}", itemIndex, itemIndexPlayer, Skill_Form.g_Form[itemIndex][itemIndexPlayer]);
-
-
-                    if (itemIndexPlayer > 26)
+                    if (search[1] > 26)
                     {
                         parsepost += "A";
-                        itemIndexPlayer -= 26;
+                        search[1] -= 26;
                     }
 
-                    parsepost += Convert.ToChar(itemIndexPlayer + 'A' - 1);
+                    parsepost += Convert.ToChar(search[1] + 'A' - 1);
 
 
                     var service = new SheetsService(new BaseClientService.Initializer()
@@ -695,23 +671,17 @@ namespace WindowsFormsApp1
                         ApplicationName = ApplicationName,
                     });
 
-                    string range = "技能類!" + parsepost + itemIndex.ToString();
+                    string range = "技能類!" + parsepost + search[0].ToString();
                     Console.WriteLine(range);
-                    int stock_num = Convert.ToInt32(Skill_Form.g_Form[itemIndex - 1][itemIndexPlayer - 1]);
+                    int stock_num = Convert.ToInt32(Skill_Form.g_Form[search[0] - 1][search[1] - 1]);
                     stock_num++;
                     Console.WriteLine("updated stock is now: " + stock_num.ToString());
-                    Skill_Form.g_Form[itemIndex - 1][itemIndexPlayer - 1] = stock_num.ToString();
-                    Console.WriteLine("updated skill form is now: " + Skill_Form.g_Form[itemIndex - 1][itemIndexPlayer - 1]);
+                    Skill_Form.g_Form[search[0] - 1][search[1] - 1] = stock_num.ToString();
+                    Console.WriteLine("updated skill form is now: " + Skill_Form.g_Form[search[0] - 1][search[1] - 1]);
                     position.Text = range;
                     num_temp.Text = stock_num.ToString();
                     var oblist = new List<object>() { stock_num };
-                    ValueRange valueRange = new ValueRange();
-                    valueRange.MajorDimension = "ROWS";
-                    valueRange.Values = new List<IList<object>> { oblist };
-                    Console.WriteLine("value range num is now: " + valueRange.Values[0][0]);
-                    SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, ID_Var, range);
-                    update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-                    UpdateValuesResponse result2 = update.Execute();
+                    Upload(new List<IList<object>> { oblist }, range);
 
                 }
                 else
@@ -722,7 +692,7 @@ namespace WindowsFormsApp1
                         {
                             if (Main_Form.g_Form[i][0].ToString() == ComboColor.Text.ToString() + "/" + ComboKind.Text.ToString())
                             {
-                                itemIndex = i;
+                                search[0] = i;
                                 break;
                             }
                         }
@@ -731,13 +701,13 @@ namespace WindowsFormsApp1
                             continue;
                         }
                     }
-                    for (int i = itemIndex; i < Main_Form.g_Form.Count; i++)
+                    for (int i = search[0]; i < Main_Form.g_Form.Count; i++)
                     {
                         try
                         {
                             if (Main_Form.g_Form[i][1].ToString() == ComboEquip.Text.ToString())
                             {
-                                itemIndex = i;
+                                search[0] = i;
                                 break;
                             }
                         }
@@ -746,13 +716,13 @@ namespace WindowsFormsApp1
                             continue;
                         }
                     }
-                    for (int i = itemIndex; i < Main_Form.g_Form.Count; i++)
+                    for (int i = search[0]; i < Main_Form.g_Form.Count; i++)
                         {
                             try
                             {
                                 if (Main_Form.g_Form[i][2].ToString() == ComboAbility.Text.ToString())
                                 {
-                                    itemIndex = i;
+                                    search[0] = i;
                                     break;
                                 }
                             }
@@ -766,24 +736,24 @@ namespace WindowsFormsApp1
                     {
                         if (Main_Form.g_Form[1][i].ToString() == ComboPlayer.Text.ToString())
                         {
-                            itemIndexPlayer = i;
+                            search[1] = i;
                             break;
                         }
                     }
-                    prev_index = itemIndex;
-                    prev_indexPlayer = itemIndexPlayer;
+                    prev_index = search[0];
+                    prev_indexPlayer = search[1];
 
 
                     //////
                     string parsepost = "";
-                    itemIndexPlayer++;
-                    itemIndex++;
+                    search[1]++;
+                    search[0]++;
 
 
-                    if (itemIndexPlayer > 26)
+                    if (search[1] > 26)
                     {
                         parsepost += "A";
-                        itemIndexPlayer -= 26;
+                        search[1] -= 26;
                     }
                     
                     var service = new SheetsService(new BaseClientService.Initializer()
@@ -792,23 +762,17 @@ namespace WindowsFormsApp1
                         ApplicationName = ApplicationName,
                     });
 
-                    parsepost += Convert.ToChar(itemIndexPlayer+'A'-1);
-                    string range = "非技能類!"+parsepost+itemIndex.ToString();
+                    parsepost += Convert.ToChar(search[1]+'A'-1);
+                    string range = "非技能類!"+parsepost+search[0].ToString();
                     Console.WriteLine(range);
 
-                    int stock_num = Convert.ToInt32(Main_Form.g_Form[itemIndex - 1][itemIndexPlayer - 1]);
+                    int stock_num = Convert.ToInt32(Main_Form.g_Form[search[0] - 1][search[1] - 1]);
                     stock_num++;
-                    Main_Form.g_Form[itemIndex - 1][itemIndexPlayer-1] = stock_num.ToString();
+                    Main_Form.g_Form[search[0] - 1][search[1]-1] = stock_num.ToString();
                     position.Text = range;
                     num_temp.Text = stock_num.ToString();
                     var oblist = new List<object>() { stock_num };
-                    ValueRange valueRange = new ValueRange();
-                    valueRange.MajorDimension = "ROWS";
-                    valueRange.Values = new List<IList<object>> { oblist };
-                    Console.WriteLine("value range num is now: " + valueRange.Values[0][0]);
-                    SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, ID_Var, range);
-                    update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-                    UpdateValuesResponse result2 = update.Execute();
+                    Upload(new List<IList<object>> { oblist }, range);
 
                 }
 
@@ -869,13 +833,7 @@ namespace WindowsFormsApp1
                 }
                 Console.WriteLine(stock_num);
                 var oblist = new List<object>() { stock_num };
-                ValueRange valueRange = new ValueRange();
-                valueRange.MajorDimension = "ROWS";
-                valueRange.Values = new List<IList<object>> { oblist };
-                Console.WriteLine(valueRange.Values[0][0]);
-                SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, ID_Var, position.Text);
-                update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-                UpdateValuesResponse result2 = update.Execute();
+                Upload(new List<IList<object>> { oblist }, position.Text);
                 status.Text = "復原成功！";
                 num_temp.Text = stock_num.ToString();
                 status.ForeColor = System.Drawing.Color.DarkGoldenrod;
@@ -927,7 +885,7 @@ namespace WindowsFormsApp1
 
         private void ComboAbility2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int itemIndex = 0;
+            var search = new int[2];
             if (ComboKind.Text.ToString() == "破壞")
             {
 
@@ -937,7 +895,7 @@ namespace WindowsFormsApp1
                     {
                         if (Skill_Form.g_Form[i][1].ToString() == ComboAbility.Text.ToString())
                         {
-                            itemIndex = i;
+                            search[0] = i;
                             break;
                         }
                     }
@@ -946,7 +904,7 @@ namespace WindowsFormsApp1
                         continue;
                     }
                 }
-                price.Text = Skill_Form.g_Form[itemIndex][2].ToString();
+                price.Text = Skill_Form.g_Form[search[0]][2].ToString();
             }
             else
             {
@@ -956,7 +914,7 @@ namespace WindowsFormsApp1
                     {
                         if (Main_Form.g_Form[i][2].ToString() == ComboAbility.Text.ToString())
                         {
-                            itemIndex = i;
+                            search[0] = i;
                             break;
                         }
                     }
@@ -965,7 +923,7 @@ namespace WindowsFormsApp1
                         continue;
                     }
                 }
-                price.Text = Main_Form.g_Form[itemIndex][3].ToString();
+                price.Text = Main_Form.g_Form[search[0]][3].ToString();
             }
         }
 
@@ -1041,14 +999,8 @@ namespace WindowsFormsApp1
                     oblist[4] = "";
 
                 }
-                ValueRange valueRange = new ValueRange();
-                valueRange.MajorDimension = "ROWS";
-                valueRange.Values = new List<IList<object>> { oblist };
-                Console.WriteLine("value range num is now: " + valueRange.Values[0]);
                 string range = "雜物出售申請!A" + rangex.ToString() + ":H" + rangex.ToString();
-                SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, ServiceTotalForm, range);
-                update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-                UpdateValuesResponse result2 = update.Execute();
+                Upload(new List<IList<object>> { oblist }, range);
                 status.Text = "申請成功!";
                 status.ForeColor = System.Drawing.Color.Green;
 
@@ -1116,6 +1068,11 @@ namespace WindowsFormsApp1
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ComboColor_SelectionChangeCommitted(object sender, EventArgs e)
         {
 
         }

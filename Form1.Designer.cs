@@ -80,15 +80,6 @@
             this.comboApplier = new System.Windows.Forms.ComboBox();
             this.label18 = new System.Windows.Forms.Label();
             this.comboReq = new System.Windows.Forms.ComboBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.status = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.position = new System.Windows.Forms.Label();
-            this.num_temp = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.button6 = new System.Windows.Forms.Button();
             this.itemgroup_cus = new System.Windows.Forms.ListBox();
@@ -108,6 +99,15 @@
             this.comboBox5 = new System.Windows.Forms.ComboBox();
             this.label31 = new System.Windows.Forms.Label();
             this.comboBox6 = new System.Windows.Forms.ComboBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.status = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.position = new System.Windows.Forms.Label();
+            this.num_temp = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -304,15 +304,15 @@
             // 
             this.ComboKind.FormattingEnabled = true;
             this.ComboKind.Items.AddRange(new object[] {
-            "均衡",
             "變化",
+            "均衡",
             "熟練",
             "破壞"});
             this.ComboKind.Location = new System.Drawing.Point(72, 69);
             this.ComboKind.Name = "ComboKind";
             this.ComboKind.Size = new System.Drawing.Size(121, 20);
             this.ComboKind.TabIndex = 2;
-            this.ComboKind.Text = "均衡";
+            this.ComboKind.Text = "變化";
             this.ComboKind.SelectedIndexChanged += new System.EventHandler(this.ComboKind_SelectedIndexChanged);
             this.ComboKind.QueryAccessibilityHelp += new System.Windows.Forms.QueryAccessibilityHelpEventHandler(this.ComboKind_QueryAccessibilityHelp);
             // 
@@ -339,6 +339,7 @@
             this.ComboColor.TabIndex = 0;
             this.ComboColor.Text = "赤紅";
             this.ComboColor.SelectedIndexChanged += new System.EventHandler(this.ComboColor_SelectedIndexChanged);
+            this.ComboColor.SelectionChangeCommitted += new System.EventHandler(this.ComboColor_SelectionChangeCommitted);
             // 
             // tabPage2
             // 
@@ -706,91 +707,6 @@
             this.comboReq.Text = "預支";
             this.comboReq.SelectedIndexChanged += new System.EventHandler(this.comboReq_SelectedIndexChanged);
             // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(21, 28);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(219, 22);
-            this.textBox1.TabIndex = 1;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(19, 9);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 12);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "試算表ID";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
-            // 
-            // status
-            // 
-            this.status.AutoSize = true;
-            this.status.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.status.Location = new System.Drawing.Point(19, 111);
-            this.status.Name = "status";
-            this.status.Size = new System.Drawing.Size(98, 12);
-            this.status.TabIndex = 3;
-            this.status.Text = "目前狀態 : 未登入";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(342, 21);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(128, 50);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "取得表單";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // position
-            // 
-            this.position.AutoSize = true;
-            this.position.Location = new System.Drawing.Point(369, 74);
-            this.position.Name = "position";
-            this.position.Size = new System.Drawing.Size(42, 12);
-            this.position.TabIndex = 5;
-            this.position.Text = "position";
-            this.position.Visible = false;
-            // 
-            // num_temp
-            // 
-            this.num_temp.AutoSize = true;
-            this.num_temp.Location = new System.Drawing.Point(437, 74);
-            this.num_temp.Name = "num_temp";
-            this.num_temp.Size = new System.Drawing.Size(33, 12);
-            this.num_temp.TabIndex = 6;
-            this.num_temp.Text = "label9";
-            this.num_temp.Visible = false;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(246, 30);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(60, 16);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "記住ID";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(19, 55);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(53, 12);
-            this.label13.TabIndex = 9;
-            this.label13.Text = "客服密碼";
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(21, 74);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.PasswordChar = '*';
-            this.textBox2.Size = new System.Drawing.Size(111, 22);
-            this.textBox2.TabIndex = 8;
-            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
-            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.button6);
@@ -997,6 +913,91 @@
             this.comboBox6.Size = new System.Drawing.Size(121, 20);
             this.comboBox6.TabIndex = 40;
             this.comboBox6.Text = "赤紅";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(21, 28);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(219, 22);
+            this.textBox1.TabIndex = 1;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(19, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 12);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "試算表ID";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
+            // 
+            // status
+            // 
+            this.status.AutoSize = true;
+            this.status.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.status.Location = new System.Drawing.Point(19, 111);
+            this.status.Name = "status";
+            this.status.Size = new System.Drawing.Size(98, 12);
+            this.status.TabIndex = 3;
+            this.status.Text = "目前狀態 : 未登入";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(342, 21);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(128, 50);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "取得表單";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // position
+            // 
+            this.position.AutoSize = true;
+            this.position.Location = new System.Drawing.Point(369, 74);
+            this.position.Name = "position";
+            this.position.Size = new System.Drawing.Size(42, 12);
+            this.position.TabIndex = 5;
+            this.position.Text = "position";
+            this.position.Visible = false;
+            // 
+            // num_temp
+            // 
+            this.num_temp.AutoSize = true;
+            this.num_temp.Location = new System.Drawing.Point(437, 74);
+            this.num_temp.Name = "num_temp";
+            this.num_temp.Size = new System.Drawing.Size(33, 12);
+            this.num_temp.TabIndex = 6;
+            this.num_temp.Text = "label9";
+            this.num_temp.Visible = false;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(246, 30);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(60, 16);
+            this.checkBox1.TabIndex = 7;
+            this.checkBox1.Text = "記住ID";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(19, 55);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(53, 12);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "客服密碼";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(21, 74);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.PasswordChar = '*';
+            this.textBox2.Size = new System.Drawing.Size(111, 22);
+            this.textBox2.TabIndex = 8;
+            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // Form1
             // 
