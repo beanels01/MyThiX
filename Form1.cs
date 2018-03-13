@@ -42,6 +42,7 @@ namespace WindowsFormsApp1
         private void Form1_Load(object sender, EventArgs e)
         {
             string path = "GDID.ini";
+            string firstrun = "Firstrun.ini";
             if (!File.Exists(path))
             {
                 textBox1.Text = "";
@@ -51,6 +52,12 @@ namespace WindowsFormsApp1
                 string readText = File.ReadAllText(path);
                 if(readText!="") checkBox1.Checked=true;
                 textBox1.Text = readText;
+            }
+            if (!File.Exists(firstrun))
+            {
+                string readText = File.ReadAllText("update_log.txt");
+                MessageBox.Show(readText,"更新公告");
+               File.WriteAllText(firstrun, "");
             }
 
         }
@@ -320,6 +327,7 @@ namespace WindowsFormsApp1
 
         public void Login_Success()
         {
+            bool is_checked = false;
             string OnlineVersionCode="";
             var service = new SheetsService(new BaseClientService.Initializer()
             {
@@ -335,18 +343,11 @@ namespace WindowsFormsApp1
                             if (Service_Form.g_Form[i][4].ToString() != Main_Form.g_Form[i][3].ToString())
                             {
                                 status.Text = "目前狀態：偵測到價格異動...同步中";
-                                Console.WriteLine("偵測到價格異動 patching... x:" + i);
                                 Main_Form.g_Form[i][3] = Service_Form.g_Form[i][4];
-                                string range = "非技能類!D" + (i+1).ToString();
-                                ValueRange valueRange = new ValueRange();
-                                valueRange.MajorDimension = "ROWS";
-                                var oblist = new List<object>() { Main_Form.g_Form[i][3] };
-                                valueRange.Values = new List<IList<object>> { oblist };
-                                Console.WriteLine("Uploading Array...");
-                                SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, ID_Var, range);
-                                update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-                                UpdateValuesResponse result2 = update.Execute();
-                    }
+                                Console.WriteLine("偵測到價格異動 patching... x:" + i);
+                            is_checked = true;
+
+                            }
                     }
                     catch(Exception er)
                     {
@@ -354,6 +355,33 @@ namespace WindowsFormsApp1
                         continue;
                     }
             }
+
+            if (is_checked)
+            {
+                ValueRange valueRange = new ValueRange();
+                valueRange.Values = new List<IList<object>> { };
+                for (int i = 2; i < Main_Form.g_Form.Count; i++)
+                {
+                    try
+                    {
+                        var oblist = new List<object>() { Main_Form.g_Form[i][3] };
+                        valueRange.Values.Add(oblist);
+                    }
+                    catch
+                    {
+                        var oblist = new List<object>() { };
+                        valueRange.Values.Add(oblist);
+                    }
+                }
+                string range = "非技能類!D3:D376";
+                valueRange.MajorDimension = "ROWS";
+                Console.WriteLine("Uploading Array...");
+                SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, ID_Var, range);
+                update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+                UpdateValuesResponse result2 = update.Execute();
+            }
+
+
             for(int i = Main_Form.g_Form.Count; i < Service_Form.g_Form.Count; i++)
             {
                 try
