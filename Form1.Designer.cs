@@ -48,6 +48,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.ComboColor = new System.Windows.Forms.ComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label32 = new System.Windows.Forms.Label();
             this.removeitem = new System.Windows.Forms.Button();
             this.itemgroup = new System.Windows.Forms.ListBox();
             this.additem = new System.Windows.Forms.Button();
@@ -343,6 +344,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.label32);
             this.tabPage2.Controls.Add(this.removeitem);
             this.tabPage2.Controls.Add(this.itemgroup);
             this.tabPage2.Controls.Add(this.additem);
@@ -368,6 +370,17 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "出單小幫手";
             this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(99, 197);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(26, 12);
+            this.label32.TabIndex = 40;
+            this.label32.Text = "num";
+            this.label32.Visible = false;
             // 
             // removeitem
             // 
@@ -377,6 +390,7 @@
             this.removeitem.TabIndex = 39;
             this.removeitem.Text = "<<";
             this.removeitem.UseVisualStyleBackColor = true;
+            this.removeitem.Click += new System.EventHandler(this.removeitem_Click);
             // 
             // itemgroup
             // 
@@ -411,25 +425,25 @@
             this.ComboPer2.Enabled = false;
             this.ComboPer2.FormattingEnabled = true;
             this.ComboPer2.Items.AddRange(new object[] {
-            "+8%",
-            "+9%",
-            "+10%",
-            "+11%",
-            "+12%"});
+            "8%",
+            "9%",
+            "10%",
+            "11%",
+            "12%"});
             this.ComboPer2.Location = new System.Drawing.Point(71, 129);
             this.ComboPer2.Name = "ComboPer2";
             this.ComboPer2.Size = new System.Drawing.Size(121, 20);
             this.ComboPer2.TabIndex = 35;
             this.ComboPer2.Text = " ";
+            this.ComboPer2.SelectedIndexChanged += new System.EventHandler(this.ComboPer2_SelectedIndexChanged);
             // 
             // button5
             // 
-            this.button5.Enabled = false;
             this.button5.Location = new System.Drawing.Point(293, 229);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(98, 49);
             this.button5.TabIndex = 33;
-            this.button5.Text = "維修中";
+            this.button5.Text = "出單！";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
@@ -506,6 +520,7 @@
             this.ComboAbility2.Name = "ComboAbility2";
             this.ComboAbility2.Size = new System.Drawing.Size(121, 20);
             this.ComboAbility2.TabIndex = 24;
+            this.ComboAbility2.SelectedIndexChanged += new System.EventHandler(this.ComboAbility2_SelectedIndexChanged_1);
             // 
             // label16
             // 
@@ -520,15 +535,15 @@
             // 
             this.ComboKind2.FormattingEnabled = true;
             this.ComboKind2.Items.AddRange(new object[] {
-            "均衡",
             "變化",
+            "均衡",
             "熟練",
             "破壞"});
             this.ComboKind2.Location = new System.Drawing.Point(71, 77);
             this.ComboKind2.Name = "ComboKind2";
             this.ComboKind2.Size = new System.Drawing.Size(121, 20);
             this.ComboKind2.TabIndex = 22;
-            this.ComboKind2.Text = "均衡";
+            this.ComboKind2.Text = "變化";
             this.ComboKind2.SelectedIndexChanged += new System.EventHandler(this.ComboKind2_SelectedIndexChanged);
             // 
             // label17
@@ -795,6 +810,7 @@
             this.button8.TabIndex = 52;
             this.button8.Text = "維修中";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // label25
             // 
@@ -1113,6 +1129,7 @@
         private System.Windows.Forms.ComboBox comboBox5;
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.ComboBox comboBox6;
+        private System.Windows.Forms.Label label32;
     }
 }
 
